@@ -14,7 +14,7 @@ services:
       - migration
       - db
   migration:
-    image: uzman
+    image: postgres
     command: python manage.py migrate --noinput
     volumes:
       - .:/code
