@@ -27,10 +27,10 @@ table{
         <div class="row">
             {% if position_list %}
             {% for position in position_list %}
+
             <div class="jumbo voting">
                 <!-- Position Description -->
                 <h2>{{ position.description }}</h2>
-                
                 <!-- List of Candidates in Position -->
                 <form action="{% url 'votes:vote' position.id %}" method="POST">
                     {% csrf_token %}
@@ -41,6 +41,7 @@ table{
                     <button id="submit" type="submit">SUBMIT</button>
                 </form>
             </div>
+
             {% endfor %}
             {% else %}
             <h1 class="jumbo">No positions currently available</h1>
