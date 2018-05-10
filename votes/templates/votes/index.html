@@ -1,41 +1,84 @@
 {% load static %}
+<style>
+table{
+    margin: auto;
+}
+</style>
 
 <html>
     <head>
         <title> Vote! </title>
-
-        <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
-<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
-<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
-        <link rel="stylesheet" href="{% static 'votes/styles.css' %}">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        
+        <!-- styles -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,500,700italic">
+        <link rel="stylesheet" type="text/css" href="https://rawgit.com/outboxcraft/beauter/master/beauter.min.css"/>
     </head>
-
     <body>
-        <div class="container">
-        {% if position_list %}
+        <!-- Header -->
+        <h1> DOCKER-DJANGO VOTING</h1> 
+        <ul class="breadcrumb _shadow">
+            <li><a href="#">Voting</a></li>
+            <li><a href="#">Results</a></li>
+        </ul>
+
+        <!-- Main voting module -->
+        <div class="row">
+            {% if position_list %}
             {% for position in position_list %}
-            <div class="position_header"><h1>{{ position.description }}</h1></div>
-
-            <form action="{% url 'votes:vote' position.id %}" method="POST">
-                {% csrf_token %}
-                {% for candidate in position.candidate_set.all %}
-                    <div class="candidate_row">
-                        <input type="radio" name="candidate" id="candidate{{ forloop.counter }}" value="{{ candidate.id }}" />
-                        <label for="candidate{{ forloop.counter }}">{{ candidate.last_name }} {{ candidate.first_name }}</label><br />
-                    </div>    
-                {% endfor %}
-                <button class="btn">Previous</button>
-                <button class="btn btn-primary">Next</button>
+            <div class="jumbo voting">
+                <!-- Position Description -->
+                <h2>{{ position.description }}</h2>
                 
-                <br><br>
-                <input type="submit" value="Submit" class="btn btn-success">
-            </form>
-
+                <!-- List of Candidates in Position -->
+                <form action="{% url 'votes:vote' position.id %}" method="POST">
+                    {% csrf_token %}
+                    {% for candidate in position.candidate_set.all %}
+                        <label for="candidate{{ forloop.counter }}">{{ candidate.last_name }} {{ candidate.first_name }}</label>
+                        <input type="radio" name="candidate" id="candidate{{ forloop.counter }}" value="{{ candidate.id }}" checked/><br>
+                    {% endfor %}
+                    <button id="submit" type="submit">SUBMIT</button>
+                </form>
+            </div>
             {% endfor %}
-        {% else %}
+            {% else %}
+            <h1 class="jumbo">No positions currently available</h1>
+            {% endif %}
         </div>
-        <h1>No positions currently available</h1>
-        {% endif %}
-        <br><br>
+        
+        <!-- RESULTS -->
+        <div class="jumbo" id="results">
+            <h2>Results</h2>
+            <table class="_width100">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Candidate</th>
+                        <th>Position</th>
+                        <th>Votes Accumulated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if candidate_list %}
+                    {% for candidate in candidate_list %}
+                    <tr>
+                        <td> {{ candidate.id }}</td>
+                        <td> {{ candidate.last_name}}, {{ candidate.first_name}} </td>
+                        <td> {{ candidate.position.description }} </td>
+                        <td> {{ candidate.votes }} </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="4">NO CANDIDATES</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <script src="https://rawgit.com/outboxcraft/beauter/master/beauter.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     </body>
 </html>
